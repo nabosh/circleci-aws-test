@@ -13,10 +13,9 @@ jobs:
       - run: npm run build --prod
       - run:
           name: Install AWS CLI
-          command: |
-              py-pip \
-              nodejs \
-              curl
+          command: py-pip \
+            nodejs \
+            curl
             pip install awscli
       - run: |
           aws s3 sync dist/ s3://circleciangularbucket --delete
