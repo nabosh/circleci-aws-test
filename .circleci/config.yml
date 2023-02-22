@@ -10,11 +10,13 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run build
+      - run: npm run build --prod
       - run:
           name: Install AWS CLI
           command: |
             sudo apt-get update && sudo apt-get install -y awscli
+      - run: |
+          aws s3 sync dist/ s3://circleciangularbucket --delete
 
 workflows:
   version: 2
