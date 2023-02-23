@@ -32,9 +32,6 @@ jobs:
           command: |
             aws lambda update-function-code \
               --function-name my-function-20230223-2 \
-              --runtime nodejs14.x \
-              --role arn:aws:iam::671249171349:role/CreateLambdaRole \
-              --handler index.handler \
               --zip-file fileb://src/aws/lambda.zip
       - run:
           name: Sync directory with S3 bucket
