@@ -29,6 +29,9 @@ jobs:
           name: List files in directory
           command: ls dist/
       - run:
+          name: Zip lambda file
+          command: zip -q -r lambda.zip lambda.mjs
+      - run:
           name: Deploy Lambda function
           command: |
             aws lambda create-function \
