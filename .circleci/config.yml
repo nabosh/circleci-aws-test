@@ -13,12 +13,14 @@ jobs:
       - run: npm run build --prod
       - run:
           name: Install AWS CLI
-          command: py-pip \
-            nodejs \
-            curl
-            pip install awscli
-      - run: |
-          aws s3 sync dist/ s3://circleciangularbucket --delete
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3-pip
+            sudo pip3 install awscli
+      - run:
+          name: Sync directory with S3 bucket
+          command: |
+            aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
 
 workflows:
   version: 2
