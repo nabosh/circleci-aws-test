@@ -18,10 +18,6 @@ jobs:
             sudo apt-get install -y python3-pip
             sudo pip3 install awscli
       - run:
-          name: Package Lambda function
-          command: |
-            zip -r lambda.zip dist/
-      - run:
           name: Configure AWS CLI
           command: |
             aws configure set default.region us-east-1
@@ -30,7 +26,7 @@ jobs:
           command: ls dist/
       - run:
           name: Zip lambda file
-          command: zip -q -r lambda.zip lambda.mjs
+          command: zip -q .circleci/lambda.zip .circleci/lambda.mjs
       - run:
           name: Deploy Lambda function
           command: |
