@@ -36,7 +36,7 @@ jobs:
               --runtime nodejs14.x \
               --role arn:aws:iam::671249171349:user/CircleCi2 \
               --handler index.handler \
-              --code "InlineCode='exports.handler = async (event) => { return \"Hello from Lambda!\"; };'"
+              --zip-file fileb://<(echo -n 'exports.handler = async (event) => { return "Hello from Lambda!"; };' | base64)
       - run:
           name: Sync directory with S3 bucket
           command: |
