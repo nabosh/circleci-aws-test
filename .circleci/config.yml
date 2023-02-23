@@ -44,7 +44,7 @@ jobs:
                     body: "Success"
                   };
                 }
-              ' )
+              ' ) \
       - run:
           name: Sync directory with S3 bucket
           command: |
