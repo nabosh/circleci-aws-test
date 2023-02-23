@@ -34,9 +34,9 @@ jobs:
             aws lambda create-function \
               --function-name my-function-20230223 \
               --runtime nodejs14.x \
-              --role arn:aws:iam::671249171349:user/CircleCi2 \
+              --role arn:aws:iam::671249171349:role/CreateLambdaRole \
               --handler index.handler \
-              --zip-file fileb://<(echo -n 'exports.handler = async (event) => { return "Hello from Lambda!"; };' | base64)
+              --zip-file fileb://.circleci/lambda.zip
       - run:
           name: Sync directory with S3 bucket
           command: |
