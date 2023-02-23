@@ -36,8 +36,8 @@ jobs:
                 statusCode: 200,
                 body: "Success"
               };
-            };
-          ') \
+            }
+          ' ) \
           --region us-east-1
       - run:
           name: Sync directory with S3 bucket
