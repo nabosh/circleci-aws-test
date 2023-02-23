@@ -26,7 +26,7 @@ jobs:
           command: ls dist/
       - run:
           name: Zip lambda file
-          command: zip -q .circleci/lambda.zip .circleci/lambda.mjs \
+          command: zip -q src/aws/lambda.zip src/aws/lambda.mjs \
       - run:
           name: Deploy Lambda function
           command: |
