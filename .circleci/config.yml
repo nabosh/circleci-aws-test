@@ -28,7 +28,7 @@ jobs:
       - run:
           name: List files in directory
           command: ls dist/
-    - run:
+      - run:
           name: Deploy Lambda function
           command: |
             aws lambda create-function \
