@@ -31,7 +31,7 @@ jobs:
           name: Deploy Lambda function
           command: |
             aws lambda create-function \
-              --function-name my-function-20230223 \
+              --function-name my-function-20230223-2 \
               --runtime nodejs14.x \
               --role arn:aws:iam::671249171349:role/CreateLambdaRole \
               --handler index.handler \
