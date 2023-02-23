@@ -36,16 +36,7 @@ jobs:
               --runtime nodejs14.x \
               --role arn:aws:iam::671249171349:user/CircleCi2 \
               --handler index.handler \
-              --code fileb://<(echo -n '
-                const AWS = require("aws-sdk");
-                exports.handler = async (event, context) => {
-                  console.log("File content:", data.Body.toString());
-                  return {
-                    statusCode: 200,
-                    body: "Success",
-                  };
-                };
-              ' | base64)
+              --code fileb://<(echo -n 'exports.handler = async (event) => { return "Hello from Lambda!"; };' | base64)
       - run:
           name: Sync directory with S3 bucket
           command: |
