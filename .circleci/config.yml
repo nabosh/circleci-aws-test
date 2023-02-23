@@ -22,6 +22,10 @@ jobs:
           command: |
             zip -r lambda.zip dist/
       - run:
+          name: Configure AWS CLI
+          command: |
+            aws configure set default.region us-east-1
+      - run:
           name: Deploy Lambda function
           command: |
             aws lambda create-function \
@@ -29,7 +33,6 @@ jobs:
               --runtime nodejs14.x \
               --role arn:aws:iam::671249171349:user/CircleCi2
               --handler index.handler \
-              --region us-east-1
               --zip-file fileb://<(echo '
                 exports.handler = async function(event) {
                   console.log("Hello from Lambda!");
