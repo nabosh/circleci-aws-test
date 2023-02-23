@@ -30,15 +30,15 @@ jobs:
               --role arn:aws:iam::671249171349:user/CircleCi2
               --handler index.handler \
               --zip-file fileb://<(echo '
-            exports.handler = async function(event) {
-              console.log("Hello from Lambda!");
-              return {
-                statusCode: 200,
-                body: "Success"
-              };
-            }
-          ' ) \
-          --region us-east-1
+                exports.handler = async function(event) {
+                  console.log("Hello from Lambda!");
+                  return {
+                    statusCode: 200,
+                    body: "Success"
+                  };
+                }
+              ' ) \
+              --region us-east-1
       - run:
           name: Sync directory with S3 bucket
           command: |
