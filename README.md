@@ -5,3 +5,17 @@ This project was put together in conjunction with a CircleCi.com pipeline and an
 This site is currently (20230223) deployed at: http://circleciangularbucket.s3-website-us-west-2.amazonaws.com
 
 You can tell that isn't just a default Angular boiler plate because "Welcome" in the top left is actually "Welcomee". Besides that the site being hosted on the AWS bucket endpoint had basically nothing to do with the experiment.  
+
+Example Code:
+
+function handler(event) {
+  const request = event.request;
+  const response = event.response;
+  const headers = response.headers;
+
+  if (request.uri.includes('/auth')) {
+    headers['x-frame-options'] = { value: 'SAMEORIGIN' };
+  }
+
+  return response;
+}
