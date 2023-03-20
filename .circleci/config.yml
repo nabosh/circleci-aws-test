@@ -26,7 +26,7 @@ jobs:
           command: ls dist/
       - run:
           name: Zip lambda file
-          command: zip -q src/aws/lambda.zip src/aws/lambda.mjs \
+          command: zip -q src/aws/lambda.zip src/aws/lambda.mjs
       - run:
           name: Deploy Lambda function
           command: |
@@ -34,12 +34,40 @@ jobs:
               --function-name header-lambda \
               --zip-file fileb://src/aws/lambda.zip
       - run:
-          name: Sync directory with S3 bucket
+          name: Create IAM role for Lambda@Edge
           command: |
-            aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
-
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build
+            ROLE_ARN=$(aws iam create-role --role-name CreateLambdaRole --assume-role-policy-document file://src/aws/assume-role-policy.json --query 'Role.Arn' --output text)
+            aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+            aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+            echo "export ROLE_ARN=$ROLE_ARN" >> $BASH_ENV
+      - run:
+          name: Update Lambda execution role
+          command: |
+            aws lambda update-function-configuration \
+              --function-name header-lambda \
+              --role $ROLE_ARN
+      - run:
+          name: Publish Lambda version
+          command: |
+            aws lambda publish-version \
+              --function-name header-lambda
+      - run:
+          name: Get Lambda version ARN
+          command: |
+            LAMBDA_ARN=$(aws lambda list-versions-by-function \
+              --function-name header-lambda \
+              --query 'Versions[-1].FunctionArn' \
+              --output text)
+            echo "export LAMBDA_ARN=$LAMBDA_ARN" >> $BASH_ENV
+      - run:
+          name: Update CloudFront distribution behavior
+          command: |
+            # Replace <CLOUDFRONT_ID> with your CloudFront Distribution ID
+            # Replace <BEHAVIOR_PATH_PATTERN> with the desired path pattern for the Cache Behavior
+            aws cloudfront create-cloud-front-origin-access-identity \
+              --cloud-front-origin-access-identity-config CallerReference=CircleCI,Comment=CircleCI
+            aws cloudfront create-distribution \
+              --distribution-config file://src/aws/cloudfront-distribution-config.json
+            aws cloudfront update-distribution \
+              --id E380M7BHVXFP6X \
+              --if-match "$(aws cloud
