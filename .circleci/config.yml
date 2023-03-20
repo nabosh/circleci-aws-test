@@ -33,13 +33,13 @@ jobs:
             aws lambda update-function-code \
               --function-name header-lambda \
               --zip-file fileb://src/aws/lambda.zip
-      - run:
-          name: Create IAM role for Lambda@Edge
-          command: |
-            ROLE_ARN=$(aws iam create-role --role-name CreateLambdaRole --assume-role-policy-document file://src/aws/assume-role-policy.json --query 'Role.Arn' --output text)
-            aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-            aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaRole
-            echo "export ROLE_ARN=$ROLE_ARN" >> $BASH_ENV
+      # - run:
+      #     name: Create IAM role for Lambda@Edge
+      #     command: |
+      #       ROLE_ARN=$(aws iam create-role --role-name CreateLambdaRole --assume-role-policy-document file://src/aws/assume-role-policy.json --query 'Role.Arn' --output text)
+      #       aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      #       aws iam attach-role-policy --role-name CreateLambdaRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+      #       echo "export ROLE_ARN=$ROLE_ARN" >> $BASH_ENV
       - run:
           name: Update Lambda execution role
           command: |
