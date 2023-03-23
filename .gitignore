@@ -1,1 +1,7 @@
 node_modules
+# Ignore Angular cache files
+.angular/cache/
+
+# Ignore .DS_Store files
+.DS_Store
+**/.DS_Store
