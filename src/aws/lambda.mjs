@@ -4,7 +4,7 @@ function handler(event) {
   const headers = response.headers;
 
   if (request.uri.includes('/auth')) {
-    headers['x-frame-options'] = { value: 'DENY' };
+    headers['x-frame-options'] = { value: 'SAMEORIGIN' };
   }
 
   return response;
