@@ -100,11 +100,22 @@ jobs:
             # Replace <DISTRIBUTION_ID> with your CloudFront Distribution ID
             DISTRIBUTION_ID=E380M7BHVXFP6X
             DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
-            aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config.json
+            aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json | jq 'del(.ETag)' > distribution-config-original.json
             # Replace <BEHAVIOR_PATH_PATTERN> with the desired path pattern for the Cache Behavior
             BEHAVIOR_PATH_PATTERN="*"
-            jq --arg lambda_version "$LAMBDA_VERSION" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:$lambda_version"' distribution-config.json > distribution-config-updated.json
+            jq --arg lambda_version "$LAMBDA_VERSION" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)"' distribution-config-original.json > distribution-config-updated.json
             aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $DISTRIBUTION_ETAG --distribution-config file://distribution-config-updated.json
+      # - run:
+      #     name: Update CloudFront behavior
+      #     command: |
+      #       # Replace <DISTRIBUTION_ID> with your CloudFront Distribution ID
+      #       DISTRIBUTION_ID=E380M7BHVXFP6X
+      #       DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
+      #       aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config.json
+      #       # Replace <BEHAVIOR_PATH_PATTERN> with the desired path pattern for the Cache Behavior
+      #       BEHAVIOR_PATH_PATTERN="*"
+      #       jq --arg lambda_version "$LAMBDA_VERSION" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:$lambda_version"' distribution-config.json > distribution-config-updated.json
+      #       aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $DISTRIBUTION_ETAG --distribution-config file://distribution-config-updated.json
       - run:
           name: Sync directory with S3 bucket
           command: |
