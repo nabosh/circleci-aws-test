@@ -84,6 +84,9 @@ jobs:
               --function-name header-lambda \
               --zip-file fileb://src/aws/lambda.zip
       - run:
+          name: Wait for Lambda update to complete
+          command: sleep 20
+      - run:
           name: Publish Lambda version
           command: |
             LAMBDA_VERSION=$(aws lambda publish-version \
