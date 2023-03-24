@@ -103,7 +103,7 @@ jobs:
             aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
             # Replace <BEHAVIOR_PATH_PATTERN> with the desired path pattern for the Cache Behavior
             BEHAVIOR_PATH_PATTERN="*"
-            jq --arg lambda_version "$LAMBDA_VERSION" 'del(.ETag) | .DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)"' distribution-config-original.json > distribution-config-updated.json
+            jq --arg lambda_version "$LAMBDA_VERSION" 'del(.ETag) | .DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)" | .DistributionConfig' distribution-config-original.json > distribution-config-updated.json
             aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $DISTRIBUTION_ETAG --distribution-config file://distribution-config-updated.json
       # - run:
       #     name: Update CloudFront behavior
