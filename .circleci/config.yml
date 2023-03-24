@@ -1,53 +1,3 @@
-# # @format
-
-# version: 2.1
-
-# jobs:
-#   build:
-#     docker:
-#       - image: circleci/node:14
-#     working_directory: ~/repo
-#     steps:
-#       - checkout
-#       - run: npm install
-#       - run: npm run build --prod
-#       - run:
-#           name: Install AWS CLI
-#           command: |
-#             sudo apt-get update
-#             sudo apt-get install -y python3-pip
-#             sudo pip3 install awscli
-#       - run:
-#           name: Configure AWS CLI
-#           command: |
-#             aws configure set default.region us-east-1
-#       - run:
-#           name: List files in directory
-#           command: ls dist/
-#       - run:
-#           name: Zip lambda file
-#           command: zip -q src/aws/lambda.zip src/aws/lambda.mjs \
-#       - run:
-#           name: Deploy Lambda function
-#           command: |
-#             aws lambda update-function-code \
-#               --function-name header-lambda \
-#               --zip-file fileb://src/aws/lambda.zip
-#       - run:
-#           name: Sync directory with S3 bucket
-#           command: |
-#             aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
-
-# workflows:
-#   version: 2
-#   build:
-#     jobs:
-#       - build
-
-# _____________________________________________________________________________________
-# _____________________________________________________________________________________
-# _____________________________________________________________________________________
-
 # @format
 
 version: 2.1
@@ -105,17 +55,6 @@ jobs:
             BEHAVIOR_PATH_PATTERN="*"
             jq --arg lambda_version "$LAMBDA_VERSION" 'del(.ETag) | .DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Quantity = 1 | .DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)" | .DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].EventType = "viewer-request" | .DistributionConfig' distribution-config-original.json > distribution-config-updated.json
             aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $DISTRIBUTION_ETAG --distribution-config file://distribution-config-updated.json
-      # - run:
-      #     name: Update CloudFront behavior
-      #     command: |
-      #       # Replace <DISTRIBUTION_ID> with your CloudFront Distribution ID
-      #       DISTRIBUTION_ID=E380M7BHVXFP6X
-      #       DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
-      #       aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config.json
-      #       # Replace <BEHAVIOR_PATH_PATTERN> with the desired path pattern for the Cache Behavior
-      #       BEHAVIOR_PATH_PATTERN="*"
-      #       jq --arg lambda_version "$LAMBDA_VERSION" '.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:$lambda_version"' distribution-config.json > distribution-config-updated.json
-      #       aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $DISTRIBUTION_ETAG --distribution-config file://distribution-config-updated.json
       - run:
           name: Sync directory with S3 bucket
           command: |
