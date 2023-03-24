@@ -3,7 +3,7 @@ function handler(event) {
   const response = event.response;
   const headers = response.headers;
 
-  if (request.uri.includes('/auth')) {
+  if (request.uri.includes('circle')) {
     headers['x-frame-options'] = { value: 'SAMEORIGIN' };
   }
 
