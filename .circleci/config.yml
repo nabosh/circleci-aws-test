@@ -28,7 +28,7 @@ jobs:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.mjs
-            node .circleci/deploy.mjs ""
+            node .circleci/deploy.mjs "${LAMBDA_VERSION}" "${DISTRIBUTION_ID}" "${DISTRIBUTION_ETAG}" "${BEHAVIOR_PATH_PATTERN}" "$(pwd)/distribution-config-original.json"
 
 workflows:
   version: 2
