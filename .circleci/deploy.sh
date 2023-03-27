@@ -1,8 +1,14 @@
 #!/bin/bash
 # Deploy Angular App
 
-# Zip lambda file
-zip -q index.zip src/aws/index.js
+# Create header-lambda directory
+mkdir header-lambda
+
+# Copy index.js file into the header-lambda directory
+cp src/aws/index.js header-lambda/
+
+# Zip the header-lambda directory
+zip -q -r index.zip header-lambda
 
 # Deploy Lambda function
 aws lambda update-function-code \
