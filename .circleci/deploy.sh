@@ -1,6 +1,9 @@
 #!/bin/bash
 # Deploy Angular App
 
+# Change to the repo directory
+cd ~/repo
+
 # Create header-lambda directory
 mkdir header-lambda
 
@@ -32,11 +35,8 @@ DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID
 aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 BEHAVIOR_PATH_PATTERN="*"
 
-# Change to the root directory of the repository
-cd $CIRCLE_WORKING_DIRECTORY
-
 # Call the deploy.mjs script and pass the required arguments
-node .circleci/deploy.mjs "${LAMBDA_VERSION}" "${DISTRIBUTION_ID}" "${DISTRIBUTION_ETAG}" "${BEHAVIOR_PATH_PATTERN}" "$(pwd)/distribution-config-original.json"
+node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
 
 # Invalidate CloudFront cache
 aws cloudfront create-invalidation \

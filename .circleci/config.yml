@@ -28,7 +28,7 @@ jobs:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.sh
-            ./deploy.sh
+            ./.circleci/deploy.sh
 
 workflows:
   version: 2
