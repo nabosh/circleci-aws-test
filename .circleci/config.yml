@@ -55,7 +55,7 @@ jobs:
           name: Sync directory with S3 bucket
           command: |
             aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
-
+# 20230327
 workflows:
   version: 2
   build:
