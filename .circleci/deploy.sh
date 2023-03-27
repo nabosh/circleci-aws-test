@@ -33,7 +33,7 @@ aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > dis
 BEHAVIOR_PATH_PATTERN="*"
 
 # Call the deploy.mjs script and pass the required arguments
-node deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN"
+node deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "distribution-config-original.json"
 
 # Invalidate CloudFront cache
 aws cloudfront create-invalidation \
