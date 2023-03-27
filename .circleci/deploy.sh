@@ -7,13 +7,15 @@ mkdir header-lambda
 # Copy index.js file into the header-lambda directory
 cp src/aws/index.js header-lambda/
 
-# Zip the header-lambda directory
-zip -q -r index.zip header-lambda
+# Change to header-lambda directory, zip the index.js file, and move back to the original directory
+pushd header-lambda
+zip -q index.zip index.js
+popd
 
 # Deploy Lambda function
 aws lambda update-function-code \
   --function-name header-lambda \
-  --zip-file fileb://index.zip
+  --zip-file fileb://header-lambda/index.zip
 
 # Wait for Lambda update to complete
 sleep 20
