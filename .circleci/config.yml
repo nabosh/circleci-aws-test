@@ -30,7 +30,7 @@ jobs:
           name: Zip lambda file
           command: zip -q src/aws/lambda.zip src/aws/lambda.mjs
       - run:
-          name: Deploy Header Lambda function
+          name: Deploy Lambda function
           command: |
             aws lambda update-function-code \
               --function-name header-lambda \
@@ -47,10 +47,10 @@ jobs:
               --output text)
             echo "export LAMBDA_VERSION=$LAMBDA_VERSION" >> $BASH_ENV
       - run:
-          name: Execute deploy.sh script
+          name: Run deploy script
           command: |
-            chmod +x deploy.sh
-            ./deploy.sh
+            chmod +x .circleci/deploy.sh
+            ./.circleci/deploy.sh
       - run:
           name: Sync directory with S3 bucket
           command: |
