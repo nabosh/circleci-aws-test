@@ -28,13 +28,13 @@ jobs:
           command: ls dist/
       - run:
           name: Zip lambda file
-          command: zip -q src/aws/lambda.zip src/aws/lambda.mjs
+          command: zip -q src/aws/index.zip src/aws/index.mjs
       - run:
           name: Deploy Lambda function
           command: |
             aws lambda update-function-code \
               --function-name header-lambda \
-              --zip-file fileb://src/aws/lambda.zip
+              --zip-file fileb://src/aws/index.zip
       - run:
           name: Wait for Lambda update to complete
           command: sleep 20
