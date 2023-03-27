@@ -28,7 +28,7 @@ jobs:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.mjs
-            node .circleci/deploy.mjs
+            node .circleci/deploy.mjs ""
 
 workflows:
   version: 2
