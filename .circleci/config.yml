@@ -28,7 +28,7 @@ jobs:
           command: ls dist/
       - run:
           name: Zip lambda file
-          command: zip -q src/aws/index.zip src/aws/index.mjs
+          command: zip -q src/aws/index.zip src/aws/index.js
       - run:
           name: Deploy Lambda function
           command: |

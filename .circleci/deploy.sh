@@ -10,7 +10,7 @@ sudo pip3 install awscli
 aws configure set default.region us-east-1
 
 # Zip lambda file
-zip -q src/aws/index.zip src/aws/index.mjs
+zip -q src/aws/index.zip src/aws/index.js
 
 # Deploy Lambda function
 aws lambda update-function-code \
