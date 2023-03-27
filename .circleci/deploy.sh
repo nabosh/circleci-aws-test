@@ -1,21 +1,13 @@
 #!/bin/bash
 # Deploy Angular App
 
-# Install AWS CLI
-sudo apt-get update
-sudo apt-get install -y python3-pip
-sudo pip3 install awscli
-
-# Configure AWS CLI
-aws configure set default.region us-east-1
-
 # Zip lambda file
-zip -q src/aws/index.zip src/aws/index.js
+zip -q index.zip src/aws/index.js
 
 # Deploy Lambda function
 aws lambda update-function-code \
   --function-name header-lambda \
-  --zip-file fileb://src/aws/index.zip
+  --zip-file fileb://index.zip
 
 # Wait for Lambda update to complete
 sleep 20
@@ -37,7 +29,7 @@ node deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHA
 
 # Invalidate CloudFront cache
 aws cloudfront create-invalidation \
-  --distribution-id DISTRIBUTION_ID \
+  --distribution-id $DISTRIBUTION_ID \
   --paths "/*"
 
 # Sync directory with S3 bucket
