@@ -30,7 +30,7 @@ jobs:
           name: Zip lambda file
           command: zip -q src/aws/lambda.zip src/aws/lambda.mjs
       - run:
-          name: Deploy Lambda function
+          name: Deploy Header Lambda function
           command: |
             aws lambda update-function-code \
               --function-name header-lambda \
