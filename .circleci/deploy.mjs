@@ -13,4 +13,17 @@ const updateCloudFrontBehavior = () => {
         return;
       }
       exec(
-        `aws cloudfront update-d
+        `aws cloudfront update-distribution --id ${distributionId} --if-match ${distributionEtag} --distribution-config file://distribution-config-updated.json`,
+        (error) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log('CloudFront behavior updated');
+        }
+      );
+    }
+  );
+};
+
+updateCloudFrontBehavior();
