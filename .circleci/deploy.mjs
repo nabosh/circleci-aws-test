@@ -45,7 +45,6 @@ const getDistribution = `aws cloudfront get-distribution --id ${distributionId}`
 const getDistributionOutput = execSync(getDistribution).toString();
 const distributionConfig = JSON.parse(getDistributionOutput);
 
-// console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
-
+console.log('distributionConfig before updateDistributionConfig call:', distributionConfig);
 updateDistributionConfig(distributionConfig);
 updateCloudFront();
