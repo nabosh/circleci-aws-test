@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 
 const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
 
-const updateDistributionConfig = () => {
+const updateDistributionConfig = (distributionConfig) => {
     // Save DistributionConfig to a file
     execSync(
       `echo '${JSON.stringify(distributionConfig.DistributionConfig)}' > temp-distribution-config.json`,
@@ -38,5 +38,5 @@ const updateCloudFront = () => {
   );
 };
 
-updateDistributionConfig();
+updateDistributionConfig(distributionConfig);
 updateCloudFront();
