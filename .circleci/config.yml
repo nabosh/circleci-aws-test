@@ -10,7 +10,7 @@ jobs:
       - run: npm install
       - run:
           name: Build Angular App
-          command: npm run build --prod
+          command: npm run build
       - run:
           name: Install AWS CLI
           command: |

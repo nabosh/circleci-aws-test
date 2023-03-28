@@ -10,7 +10,7 @@ export AWS_DEFAULT_REGION=us-east-1
 # Build and deploy Angular application to S3
 cd ~/repo
 npm ci
-npm run build -- --prod
+npm run build
 aws s3 sync dist/circlecitest/ s3://circleciangularbucket/ --delete
 
 # Update the Lambda function
