@@ -6,7 +6,12 @@ const [lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, con
 async function main() {
   const config = JSON.parse(await fs.readFile(configFile, 'utf-8'));
   const distributionConfig = config.DistributionConfig;
-  const cacheBehaviors = distributionConfig.CacheBehaviors.Items;
+  const cacheBehaviors = distributionConfig.CacheBehaviors?.Items;
+
+  if (!cacheBehaviors) {
+    console.error('No CacheBehaviors found in the CloudFront distribution configuration.');
+    process.exit(1);
+  }
 
   let behaviorFound = false;
 
