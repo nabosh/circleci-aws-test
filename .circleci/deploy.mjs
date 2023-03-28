@@ -31,15 +31,15 @@ const updateDistributionConfig = (distConfig) => {
 };
     
 const updateCloudFront = () => {
-  execSync(
-    `aws cloudfront update-distribution \
-      --id ${distributionId} \
-      --if-match ${distributionEtag} \
-      --distribution-config file://distribution-config-updated.json`,
-    { stdio: 'inherit' }
-  );
+    execSync(
+        `aws cloudfront update-distribution \
+        --id ${distributionId} \
+        --if-match ${distributionEtag} \
+        --distribution-config file://distribution-config-updated.json`,
+        { stdio: 'inherit' }
+    );
 };
-
+  
 const getDistribution = `aws cloudfront get-distribution --id ${distributionId}`;
 const getDistributionOutput = execSync(getDistribution).toString();
 const distributionConfig = JSON.parse(getDistributionOutput);
@@ -47,3 +47,4 @@ const distributionConfig = JSON.parse(getDistributionOutput);
 console.log('distributionConfig before updateDistributionConfig call:', distributionConfig);
 updateDistributionConfig(distributionConfig);
 updateCloudFront();
+  
