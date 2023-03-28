@@ -9,11 +9,11 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
     const behavior = config.DistributionConfig.DefaultCacheBehavior;
 
     const lambdaAssociation = behavior.LambdaFunctionAssociations.Items.find(
-      (item) => item.EventType === 'viewer-request'
+      (item) => item.EventType === 'origin-response'
     );
 
     if (!lambdaAssociation) {
-      console.error('No LambdaFunctionAssociation found with EventType "viewer-request".');
+      console.error('No LambdaFunctionAssociation found with EventType "origin-response".');
       process.exit(1);
     }
 
