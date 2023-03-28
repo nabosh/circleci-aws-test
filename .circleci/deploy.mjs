@@ -6,7 +6,7 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
   try {
     const configJSON = await fs.readFile(configFile, 'utf-8');
     const config = JSON.parse(configJSON);
-    const behavior = config.Distribution.DistributionConfig.DefaultCacheBehavior;
+    const behavior = config.DistributionConfig.DefaultCacheBehavior;
 
     const lambdaAssociation = behavior.LambdaFunctionAssociations.Items.find(
       (item) => item.EventType === 'origin-response'
@@ -24,9 +24,8 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
 
     // Remove unnecessary fields from the configuration object
     delete config.ETag;
-    const updatedConfig = config.Distribution.DistributionConfig;
 
-    await fs.writeFile('distribution-config-updated.json', JSON.stringify(updatedConfig, null, 2));
+    await fs.writeFile('distribution-config-updated.json', JSON.stringify(config.DistributionConfig, null, 2));
 
     execSync(
       `aws cloudfront update-distribution --id ${distributionId} --if-match ${distributionEtag} --distribution-config file://distribution-config-updated.json`,
