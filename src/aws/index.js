@@ -1,13 +1,14 @@
 'use strict';
+
 exports.handler = (event, context, callback) => {
 
-    //Get contents of response
+    const request = event.Records[0].cf.request;
     const response = event.Records[0].cf.response;
     const headers = response.headers;
 
-    //Set new headers
-    headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'SAMEORIGIN'}];
+    if (request.uri.includes('auth')) {
+        headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'DENY' }];
+    }
 
-    //Return modified response
     callback(null, response);
 };
