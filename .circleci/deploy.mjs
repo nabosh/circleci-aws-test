@@ -1,36 +1,60 @@
-import { readFile, writeFile } from 'fs/promises';
-import { exec } from 'child_process';
+import { promises as fs } from 'fs';
+import { spawn } from 'child_process';
 
-const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile) => {
-  try {
-    const distributionConfig = JSON.parse(await readFile(distributionConfigFile, 'utf8'));
-    const behaviors = distributionConfig.DistributionConfig.CacheBehaviors.Items;
+const [lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv.slice(2);
 
-    behaviors.forEach((behavior) => {
-      if (behavior.PathPattern === behaviorPathPattern) {
-        behavior.LambdaFunctionAssociations.Items.forEach((association) => {
-          if (association.EventType === 'origin-request') {
-            association.LambdaFunctionARN = association.LambdaFunctionARN.replace(/:\d+$/, `:${lambdaVersion}`);
-          }
-        });
-      }
-    });
+async function main() {
+  const config = JSON.parse(await fs.readFile(configFile, 'utf-8'));
+  const distributionConfig = config.DistributionConfig;
+  const cacheBehaviors = distributionConfig.CacheBehaviors.Items;
 
-    await writeFile(distributionConfigFile, JSON.stringify(distributionConfig));
+  let behaviorFound = false;
 
-    exec(`aws cloudfront update-distribution --id ${distributionId} --distribution-config file://${distributionConfigFile} --if-match ${distributionEtag}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
+  cacheBehaviors.forEach((behavior) => {
+    if (behavior.PathPattern === behaviorPathPattern) {
+      behavior.LambdaFunctionAssociations.Items.forEach((association) => {
+        if (association.EventType === 'origin-request') {
+          association.LambdaFunctionARN = association.LambdaFunctionARN.replace(/:[^:]+$/, `:${lambdaVersion}`);
+          behaviorFound = true;
+        }
+      });
+    }
+  });
 
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
+  if (!behaviorFound) {
+    console.error(`No behavior found with PathPattern "${behaviorPathPattern}" and EventType "origin-request".`);
+    process.exit(1);
   }
-};
 
-const [lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile] = process.argv.slice(2);
-updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile);
+  const updatedConfigFile = 'distribution-config-updated.json';
+  await fs.writeFile(updatedConfigFile, JSON.stringify({ DistributionConfig: distributionConfig }));
+
+  const updateDistribution = spawn('aws', [
+    'cloudfront',
+    'update-distribution',
+    '--id',
+    distributionId,
+    '--distribution-config',
+    `file://${updatedConfigFile}`,
+    '--if-match',
+    distributionEtag,
+  ]);
+
+  updateDistribution.stdout.pipe(process.stdout);
+  updateDistribution.stderr.pipe(process.stderr);
+
+  updateDistribution.on('close', async (code) => {
+    if (code === 0) {
+      console.log('CloudFront distribution updated successfully.');
+    } else {
+      console.error(`CloudFront distribution update failed with exit code ${code}.`);
+    }
+
+    await fs.unlink(updatedConfigFile);
+  });
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
