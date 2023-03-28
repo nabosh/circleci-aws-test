@@ -3,15 +3,15 @@ import { execSync } from 'child_process';
 
 const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
 
-const updateDistributionConfig = (distributionConfig) => {
+const updateDistributionConfig = (distConfig) => {
     // Save DistributionConfig to a file
     execSync(
-      `echo '${JSON.stringify(distributionConfig.DistributionConfig)}' > temp-distribution-config.json`,
+      `echo '${JSON.stringify(distConfig.DistributionConfig)}' > temp-distribution-config.json`,
       { stdio: 'inherit' }
     );
 
     console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
-  
+
     execSync(
         `jq --arg lambda_version "${lambdaVersion}" "\
           . |= (\
@@ -27,8 +27,8 @@ const updateDistributionConfig = (distributionConfig) => {
           )\
         " temp-distribution-config.json > distribution-config-updated.json`,
         { stdio: 'inherit' }
-      );
-        
+    );
+};
     
 const updateCloudFront = () => {
   execSync(
