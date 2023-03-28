@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { execSync } from 'child_process';
 
 const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
