@@ -5,7 +5,7 @@ const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPatte
 const updateDistributionConfig = () => {
     execSync(
       `jq --arg lambda_version "${lambdaVersion}" '
-        .DistributionConfig |= (
+        . |= (
           del(.ETag) |
           .DefaultCacheBehavior.LambdaFunctionAssociations |=
             if .Items == null then
@@ -16,11 +16,11 @@ const updateDistributionConfig = () => {
               (.Items |= . + [{"EventType": "origin-response", "LambdaFunctionARN": "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)"}])
             end
         )
-      ' ${configFile} > distribution-config-updated.json`,
+      ' <(echo '.DistributionConfig' | jq -s add "${configFile}") > distribution-config-updated.json`,
       { stdio: 'inherit' }
     );
   };
-  
+    
 const updateCloudFront = () => {
   execSync(
     `aws cloudfront update-distribution \
