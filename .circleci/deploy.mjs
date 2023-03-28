@@ -22,6 +22,10 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
       `:${lambdaVersion}`
     );
 
+    // Remove unnecessary fields from the configuration object
+    delete config.ETag;
+    delete config.DistributionConfig;
+
     await fs.writeFile('distribution-config-updated.json', JSON.stringify(config, null, 2));
 
     execSync(
