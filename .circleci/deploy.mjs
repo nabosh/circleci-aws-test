@@ -3,6 +3,12 @@ import { execSync } from 'child_process';
 const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
 
 const updateDistributionConfig = () => {
+    // Save DistributionConfig to a file
+    execSync(
+      `echo '${JSON.stringify(distributionConfig.DistributionConfig)}' > temp-distribution-config.json`,
+      { stdio: 'inherit' }
+    );
+  
     execSync(
       `jq --arg lambda_version "${lambdaVersion}" '
         . |= (
@@ -16,10 +22,11 @@ const updateDistributionConfig = () => {
               (.Items |= . + [{"EventType": "origin-response", "LambdaFunctionARN": "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:\($lambda_version)"}])
             end
         )
-      ' <(echo '.DistributionConfig' | jq -s add "${configFile}") > distribution-config-updated.json`,
+      ' temp-distribution-config.json > distribution-config-updated.json`,
       { stdio: 'inherit' }
     );
   };
+  
     
 const updateCloudFront = () => {
   execSync(
