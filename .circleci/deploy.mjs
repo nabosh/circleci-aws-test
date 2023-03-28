@@ -1,69 +1,60 @@
-import { promises as fs } from 'fs';
-import { spawn } from 'child_process';
+const { promises: fs } = require('fs');
+const { spawn } = require('child_process');
+const AWS = require('aws-sdk');
 
-const [lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv.slice(2);
+const cloudfront = new AWS.CloudFront();
+const lambda = new AWS.Lambda();
 
-async function main() {
-  const config = JSON.parse(await fs.readFile(configFile, 'utf-8'));
-  const distributionConfig = config.DistributionConfig;
-  const cacheBehaviors = distributionConfig.CacheBehaviors?.Items;
+async function updateCloudFront() {
+  const functionName = process.env.LAMBDA_FUNCTION_NAME;
+  const functionInfo = await getLambdaFunctionInfo(functionName);
+  const distributionID = process.env.CLOUDFRONT_DISTRIBUTION_ID;
+  const distributionConfig = await getDistributionConfig(distributionID);
+  const lambdaARN = functionInfo.FunctionArn;
 
-  if (!cacheBehaviors) {
-    console.error('No CacheBehaviors found in the CloudFront distribution configuration.');
-    process.exit(1);
-  }
+  // Find the default cache behavior and update its Lambda function association
+  const defaultCacheBehavior = distributionConfig.DefaultCacheBehavior;
+  defaultCacheBehavior.LambdaFunctionAssociations = {
+    Quantity: 1,
+    Items: [
+      {
+        LambdaFunctionARN: lambdaARN,
+        EventType: 'viewer-request',
+      },
+    ],
+  };
 
-  let behaviorFound = false;
-
-  console.log('CloudFront configuration before update:', JSON.stringify(distributionConfig, null, 2));
-
-  cacheBehaviors.forEach((behavior) => {
-    if (behavior.PathPattern === behaviorPathPattern) {
-      behavior.LambdaFunctionAssociations.Items.forEach((association) => {
-        if (association.EventType === 'origin-request') {
-          association.LambdaFunctionARN = association.LambdaFunctionARN.replace(/:[^:]+$/, `:${lambdaVersion}`);
-          behaviorFound = true;
-        }
-      });
-    }
-  });
-
-  console.log('CloudFront configuration after update:', JSON.stringify(distributionConfig, null, 2));
-
-  if (!behaviorFound) {
-    console.error(`No behavior found with PathPattern "${behaviorPathPattern}" and EventType "origin-request".`);
-    process.exit(1);
-  }
-
-  const updatedConfigFile = 'distribution-config-updated.json';
-  await fs.writeFile(updatedConfigFile, JSON.stringify({ DistributionConfig: distributionConfig }));
-
-  const updateDistribution = spawn('aws', [
-    'cloudfront',
-    'update-distribution',
-    '--id',
-    distributionId,
-    '--distribution-config',
-    `file://${updatedConfigFile}`,
-    '--if-match',
-    distributionEtag,
-  ]);
-
-  updateDistribution.stdout.pipe(process.stdout);
-  updateDistribution.stderr.pipe(process.stderr);
-
-  updateDistribution.on('close', async (code) => {
-    if (code === 0) {
-      console.log('CloudFront distribution updated successfully.');
-    } else {
-      console.error(`CloudFront distribution update failed with exit code ${code}.`);
-    }
-
-    await fs.unlink(updatedConfigFile);
-  });
+  await updateDistribution(distributionID, distributionConfig);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+async function getDistributionConfig(distributionID) {
+  const params = { Id: distributionID };
+  const { DistributionConfig, ETag } = await cloudfront.getDistributionConfig(params).promise();
+
+  return { DistributionConfig, ETag };
+}
+
+async function updateDistribution(distributionID, { DistributionConfig, ETag }) {
+  const params = {
+    Id: distributionID,
+    DistributionConfig,
+    IfMatch: ETag,
+  };
+  await cloudfront.updateDistribution(params).promise();
+}
+
+async function getLambdaFunctionInfo(functionName) {
+  const params = { FunctionName: functionName };
+  const functionInfo = await lambda.getFunction(params).promise();
+  return functionInfo.Configuration;
+}
+
+(async () => {
+  try {
+    await updateCloudFront();
+    console.log('Successfully updated CloudFront configuration with the new Lambda ARN.');
+  } catch (error) {
+    console.error('Error updating CloudFront configuration:', error.message);
+    process.exit(1);
+  }
+})();
