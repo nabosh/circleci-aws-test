@@ -6,6 +6,9 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
   try {
     const configJSON = await fs.readFile(configFile, 'utf-8');
     const config = JSON.parse(configJSON);
+    
+    console.log('CacheBehaviors:', config.DistributionConfig.CacheBehaviors); // Add this line to log CacheBehaviors
+
     const behavior = config.DistributionConfig.CacheBehaviors.Items.find(
       (b) => b.PathPattern === behaviorPathPattern
     );
