@@ -16,7 +16,7 @@ async function updateDistributionConfig(distributionConfig) {
   console.log('temp-distribution-config.json content:', tempDistributionConfigContent);
 
   try {
-    const lambdaVersion = 70;
+    const lambdaVersion = process.argv[2];
     const jqCommand = `jq --arg lambda_version "${lambdaVersion}" '. |= (del(.ETag) | .DefaultCacheBehavior.LambdaFunctionAssociations |= if .Items == null then .Items = [{"EventType": "origin-response", "LambdaFunctionARN": "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:(\\$lambda_version)"}] | .Quantity = 1 else (.Quantity = (.Items | length + 1)) | (.Items |= . + [{"EventType": "origin-response", "LambdaFunctionARN": "arn:aws:lambda:us-east-1:671249171349:function:header-lambda:(\\$lambda_version)"}]) end)' temp-distribution-config.json > distribution-config-updated.json`;
     execSync(jqCommand);
   } catch (error) {
