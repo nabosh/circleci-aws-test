@@ -6,14 +6,7 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
   try {
     const configJSON = await fs.readFile(configFile, 'utf-8');
     const config = JSON.parse(configJSON);
-    const behavior = config.DistributionConfig.CacheBehaviors.Items.find(
-      (b) => b.PathPattern === behaviorPathPattern
-    );
-
-    if (!behavior) {
-      console.error(`No CacheBehavior found with PathPattern "${behaviorPathPattern}".`);
-      process.exit(1);
-    }
+    const behavior = config.DistributionConfig.DefaultCacheBehavior;
 
     const lambdaAssociation = behavior.LambdaFunctionAssociations.Items.find(
       (item) => item.EventType === 'origin-response'
