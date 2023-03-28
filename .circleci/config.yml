@@ -25,6 +25,9 @@ jobs:
           name: List files in directory
           command: ls dist/
       - run:
+          name: Install AWS SDK
+          command: npm install aws-sdk
+      - run:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.sh
