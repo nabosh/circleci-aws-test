@@ -6,6 +6,7 @@ exports.handler = async (event) => {
   const headers = response.headers;
 
   if (request.uri.includes('auth')) {
+    console.log('header added')
     headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'SAMEORIGIN' }];
   }
 
