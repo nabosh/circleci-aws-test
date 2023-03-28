@@ -35,8 +35,8 @@ DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID
 aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 BEHAVIOR_PATH_PATTERN="*"
 
-# Call the deploy.mjs script and pass the required arguments
-node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+# Call the deploy.js script and pass the required arguments
+node .circleci/deploy.js "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
 
 # Invalidate CloudFront cache
 aws cloudfront create-invalidation \
