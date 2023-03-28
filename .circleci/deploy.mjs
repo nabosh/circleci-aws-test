@@ -9,6 +9,8 @@ const updateDistributionConfig = (distributionConfig) => {
       `echo '${JSON.stringify(distributionConfig.DistributionConfig)}' > temp-distribution-config.json`,
       { stdio: 'inherit' }
     );
+
+    console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
   
     execSync(
       `jq --arg lambda_version "${lambdaVersion}" '
@@ -43,7 +45,7 @@ const getDistribution = `aws cloudfront get-distribution --id ${distributionId}`
 const getDistributionOutput = execSync(getDistribution).toString();
 const distributionConfig = JSON.parse(getDistributionOutput);
 
-console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
+// console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
 
 updateDistributionConfig(distributionConfig);
 updateCloudFront();
