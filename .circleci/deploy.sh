@@ -31,10 +31,10 @@ DISTRIBUTION_ID=E380M7BHVXFP6X
 DISTRIBUTION_CONFIG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID)
 
 # Modify the distribution configuration to update the Lambda function ARN with the new version number
-UPDATED_CONFIG=$(echo $DISTRIBUTION_CONFIG | jq --arg version $LATEST_VERSION '.DistributionConfig | .DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = ("arn:aws:lambda:us-east-1:671249171349:function:header-lambda:" + $version)')
+UPDATED_CONFIG=$(echo $DISTRIBUTION_CONFIG | jq --arg version $LATEST_VERSION '.DistributionConfig | .DefaultCacheBehavior.LambdaFunctionAssociations.Items[] |= if .LambdaFunctionARN | startswith("arn:aws:lambda:us-east-1:671249171349:function:header-lambda") then .LambdaFunctionARN = ("arn:aws:lambda:us-east-1:671249171349:function:header-lambda:" + $version) else . end')
 
 # Update the CloudFront distribution with the modified configuration
-aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $(echo $DISTRIBUTION_CONFIG | jq -r '.ETag') --distribution-config "$(echo $UPDATED_CONFIG | jq -r '.DistributionConfig')"
+aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $(echo $DISTRIBUTION_CONFIG | jq -r '.ETag') --distribution-config "$(echo $UPDATED_CONFIG | jq -r '.')"
 
 # Invalidate the CloudFront cache
 aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
