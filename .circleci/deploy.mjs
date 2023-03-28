@@ -38,9 +38,11 @@ const updateCloudFront = () => {
   );
 };
 
-// const distributionId = 'E380M7BHVXFP6X'; // Replace this with your actual CloudFront Distribution ID
 const getDistribution = `aws cloudfront get-distribution --id ${distributionId}`;
 const getDistributionOutput = execSync(getDistribution).toString();
 const distributionConfig = JSON.parse(getDistributionOutput);
+
+console.log('temp-distribution-config.json content:', fs.readFileSync('temp-distribution-config.json', 'utf-8'));
+
 updateDistributionConfig(distributionConfig);
 updateCloudFront();
