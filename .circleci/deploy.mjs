@@ -1,5 +1,6 @@
 // const { promises: fs } = require('fs');
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
+import fs from "fs"
 const { spawn } = require('child_process');
 const AWS = require('aws-sdk');
 
