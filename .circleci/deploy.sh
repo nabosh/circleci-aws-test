@@ -1,47 +1,40 @@
 #!/bin/bash
-# Deploy Angular App
 
-# Change to the repo directory
+set -e
+
+# Set AWS credentials
+export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
+export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY
+export AWS_DEFAULT_REGION=us-east-1
+
+# Build and deploy Angular application to S3
 cd ~/repo
+npm ci
+npm run build -- --prod
+aws s3 sync dist/circlecitest/ s3://circleciangularbucket/ --delete
 
-# Create header-lambda directory
-mkdir header-lambda
+# Update the Lambda function
+cd ~/repo/header-lambda
+zip -r lambda.zip .
+aws lambda update-function-code --function-name header-lambda --zip-file fileb://lambda.zip
 
-# Copy index.js file into the header-lambda directory
-cp src/aws/index.js header-lambda/
+# Publish a new version of the Lambda function
+aws lambda publish-version --function-name header-lambda
 
-# Change to header-lambda directory, zip the index.js file, and move back to the original directory
-pushd header-lambda
-zip -q index.zip index.js
-popd
+# Retrieve the latest version number
+LATEST_VERSION=$(aws lambda list-versions-by-function --function-name header-lambda --query "Versions[-1].[Version]" --output text)
 
-# Deploy Lambda function
-aws lambda update-function-code \
-  --function-name header-lambda \
-  --zip-file fileb://header-lambda/index.zip
-
-# Wait for Lambda update to complete
-sleep 20
-
-# Publish Lambda version
-LAMBDA_VERSION=$(aws lambda publish-version \
-  --function-name header-lambda \
-  --query Version \
-  --output text)
-
-# Update CloudFront behavior
+# Get CloudFront distribution ID (replace with your distribution ID)
 DISTRIBUTION_ID=E380M7BHVXFP6X
-DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
-aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
-BEHAVIOR_PATH_PATTERN="*"
 
-# Call the deploy.mjs script and pass the required arguments
-node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+# Get the current CloudFront distribution configuration
+DISTRIBUTION_CONFIG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID)
 
-# Invalidate CloudFront cache
-aws cloudfront create-invalidation \
-  --distribution-id $DISTRIBUTION_ID \
-  --paths "/*"
+# Modify the distribution configuration to update the Lambda function ARN with the new version number
+UPDATED_CONFIG=$(echo $DISTRIBUTION_CONFIG | jq --arg version $LATEST_VERSION '.DistributionConfig | .DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN = ("arn:aws:lambda:us-east-1:671249171349:function:header-lambda:" + $version)')
 
-# Sync directory with S3 bucket
-aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
+# Update the CloudFront distribution with the modified configuration
+aws cloudfront update-distribution --id $DISTRIBUTION_ID --if-match $(echo $DISTRIBUTION_CONFIG | jq -r '.ETag') --distribution-config "$(echo $UPDATED_CONFIG | jq -r '.DistributionConfig')"
+
+# Invalidate the CloudFront cache
+aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
