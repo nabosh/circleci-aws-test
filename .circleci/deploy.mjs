@@ -1,43 +1,36 @@
-import { promises as fs } from 'fs';
-import { execSync } from 'child_process';
+import { readFile, writeFile } from 'fs/promises';
+import { exec } from 'child_process';
 
-async function getDistributionConfig() {
-  const output = execSync('aws cloudfront get-distribution --id E380M7BHVXFP6X');
-  const distributionConfig = JSON.parse(output.toString());
-
-  return distributionConfig;
-}
-
-async function updateDistributionConfig(distributionConfig) {
-  await fs.writeFile('temp-distribution-config.json', JSON.stringify(distributionConfig));
-
-  // Print the content of temp-distribution-config.json for debugging
-  const tempDistributionConfigContent = await fs.readFile('temp-distribution-config.json', 'utf-8');
-  console.log('temp-distribution-config.json content:', tempDistributionConfigContent);
-
+const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile) => {
   try {
-    const lambdaVersion = process.argv[2];
-    const jqCommand = `jq --arg lambda_version "${lambdaVersion}" '. |= (del(.ETag) | .DefaultCacheBehavior.LambdaFunctionAssociations |= if .Items == null then .Items = [{"EventType": "origin-response", "LambdaFunctionARN": ("arn:aws:lambda:us-east-1:671249171349:function:header-lambda:" + $lambda_version)}] | .Quantity = 1 else (.Quantity = (.Items | length + 1)) | (.Items |= . + [{"EventType": "origin-response", "LambdaFunctionARN": ("arn:aws:lambda:us-east-1:671249171349:function:header-lambda:" + $lambda_version)}]) end)' temp-distribution-config.json > distribution-config-updated.json`;
-    execSync(jqCommand);
+    const distributionConfig = JSON.parse(await readFile(distributionConfigFile, 'utf8'));
+    const behaviors = distributionConfig.DistributionConfig.CacheBehaviors.Items;
+
+    behaviors.forEach((behavior) => {
+      if (behavior.PathPattern === behaviorPathPattern) {
+        behavior.LambdaFunctionAssociations.Items.forEach((association) => {
+          if (association.EventType === 'origin-request') {
+            association.LambdaFunctionARN = association.LambdaFunctionARN.replace(/:\d+$/, `:${lambdaVersion}`);
+          }
+        });
+      }
+    });
+
+    await writeFile(distributionConfigFile, JSON.stringify(distributionConfig));
+
+    exec(`aws cloudfront update-distribution --id ${distributionId} --distribution-config file://${distributionConfigFile} --if-match ${distributionEtag}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+    });
+
   } catch (error) {
-    console.error('Error updating distribution config:', error);
+    console.error(`Error: ${error.message}`);
   }
-  // Print the content of distribution-config-updated.json for debugging
-  const distributionConfigUpdatedContent = await fs.readFile('distribution-config-updated.json', 'utf-8');
-  console.log('distribution-config-updated.json content:', distributionConfigUpdatedContent);
-}
+};
 
-async function main() {
-  const distributionConfig = await getDistributionConfig();
-
-  console.log('distributionConfig before updateDistributionConfig call:', distributionConfig);
-
-  await updateDistributionConfig(distributionConfig.Distribution);
-
-  const updatedDistributionConfig = await fs.readFile('distribution-config-updated.json', 'utf-8');
-  execSync(`aws cloudfront update-distribution --id E380M7BHVXFP6X --if-match ${distributionConfig.ETag} --distribution-config '${updatedDistributionConfig}'`);
-}
-
-main().catch((error) => {
-  console.error('Error in main:', error);
-});
+const [lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile] = process.argv.slice(2);
+updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, distributionConfigFile);

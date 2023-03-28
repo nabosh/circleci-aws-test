@@ -32,7 +32,7 @@ LAMBDA_VERSION=$(aws lambda publish-version \
 # Update CloudFront behavior
 DISTRIBUTION_ID=E380M7BHVXFP6X
 DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
-aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
+# aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 BEHAVIOR_PATH_PATTERN="*"
 
 # Call the deploy.mjs script and pass the required arguments
