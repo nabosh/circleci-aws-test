@@ -15,6 +15,8 @@ async function main() {
 
   let behaviorFound = false;
 
+  console.log('CloudFront configuration before update:', JSON.stringify(distributionConfig, null, 2));
+
   cacheBehaviors.forEach((behavior) => {
     if (behavior.PathPattern === behaviorPathPattern) {
       behavior.LambdaFunctionAssociations.Items.forEach((association) => {
@@ -25,6 +27,8 @@ async function main() {
       });
     }
   });
+
+  console.log('CloudFront configuration after update:', JSON.stringify(distributionConfig, null, 2));
 
   if (!behaviorFound) {
     console.error(`No behavior found with PathPattern "${behaviorPathPattern}" and EventType "origin-request".`);
