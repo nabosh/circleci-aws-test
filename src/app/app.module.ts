@@ -3,13 +3,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthurlComponent } from './authurl/authurl.component';
+import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AuthurlComponent,
+    AuthComponent,
     HomeComponent
   ],
   imports: [
