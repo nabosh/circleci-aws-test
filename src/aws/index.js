@@ -5,9 +5,14 @@ exports.handler = async (event) => {
   const response = event.Records[0].cf.response;
   const headers = response.headers;
 
-  // if (request.uri.includes('auth')) {
+  console.log('Request:', request);
+  console.log('Response:', response);
+
+  if (request.uri.includes('auth')) {
     headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'DENY' }];
-  // }
+  }
+
+  console.log('Updated Headers:', headers);
 
   return response;
 };
