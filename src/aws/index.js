@@ -7,10 +7,12 @@ exports.handler = async (event) => {
 
   console.log('Requestt:', request);
   console.log('Responsee:', response);
+  console.log('Request URI:', request.uri);
+  console.log('Checking if request URI contains "auth":', request.uri.includes('auth'));
 
   if (request.uri.includes('auth')) {
     console.log('URI contains "auth", adding X-Frame-Options header');
-    headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'DENY' }];
+    headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'SAMEORIGIN' }];
   }
 
   console.log('Updated Headers:', headers);
