@@ -5,8 +5,8 @@ exports.handler = async (event) => {
   const response = event.Records[0].cf.response;
   const headers = response.headers;
 
-  console.log('Request:', request);
-  console.log('Response:', response);
+  console.log('Requestt:', request);
+  console.log('Responsee:', response);
 
   if (request.uri.includes('auth')) {
     console.log('URI contains "auth", adding X-Frame-Options header');
