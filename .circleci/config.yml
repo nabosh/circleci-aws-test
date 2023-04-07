@@ -27,11 +27,22 @@ jobs:
       - run:
           name: Install AWS SDK
           command: npm install aws-sdk
+
+      
+      
+      # - run:
+      #     name: Run deploy script
+      #     command: |
+      #       chmod +x .circleci/deploy.sh
+      #       ./.circleci/deploy.sh
       - run:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.sh
             ./.circleci/deploy.sh
+          environment:
+            LAMBDA_FUNCTION_NAME: header-lambda
+            CLOUDFRONT_DISTRIBUTION_ID: E380M7BHVXFP6X
 
 
 workflows:

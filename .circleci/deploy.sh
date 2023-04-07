@@ -17,7 +17,7 @@ popd
 
 # Deploy Lambda function
 aws lambda update-function-code \
-  --function-name header-lambda \
+  --function-name $LAMBDA_FUNCTION_NAME \
   --zip-file fileb://header-lambda/index.zip
 
 # Wait for Lambda update to complete
@@ -25,12 +25,12 @@ sleep 20
 
 # Publish Lambda version
 LAMBDA_VERSION=$(aws lambda publish-version \
-  --function-name header-lambda \
+  --function-name $LAMBDA_FUNCTION_NAME \
   --query Version \
   --output text)
 
 # Update CloudFront behavior
-DISTRIBUTION_ID=E380M7BHVXFP6X
+DISTRIBUTION_ID=$CLOUDFRONT_DISTRIBUTION_ID
 DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
 aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 BEHAVIOR_PATH_PATTERN="*"
