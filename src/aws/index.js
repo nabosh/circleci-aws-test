@@ -16,10 +16,10 @@ exports.handler = async (event) => {
     throw new Error(`Unexpected event type: ${eventType}`);
   }
 
-  if (request.uri.includes('auth')) {
+  // if (request.uri.includes('auth')) {
     console.log('URI contains "auth", adding X-Frame-Options header');
     headers['x-frame-options'] = [{ key: 'X-Frame-Options', value: 'SAMEORIGIN' }];
-  }
+  // }
 
   console.log('Updated Headers:', headers);
 
