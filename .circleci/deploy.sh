@@ -29,6 +29,8 @@ function deploy_lambda() {
     --query Version \
     --output text)
 
+  echo "AWS Lambda publish-version output: $LAMBDA_VERSION_OUTPUT"
+
   echo -n $LAMBDA_VERSION
 }
 
