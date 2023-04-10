@@ -29,7 +29,7 @@ function deploy_lambda() {
     --query Version \
     --output text)
 
-  echo $LAMBDA_VERSION
+  echo -n $LAMBDA_VERSION
 }
 
 function update_cloudfront_behavior() {
