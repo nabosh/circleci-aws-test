@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Deploy Angular App
 
 function create_lambda_package() {
@@ -21,7 +22,7 @@ function deploy_lambda() {
     --zip-file fileb://header-lambda/index.zip
 
   # Wait for Lambda update to complete
-  sleep 20
+  sleep 10
 
   # Publish Lambda version
   LAMBDA_VERSION=$(aws lambda publish-version \
