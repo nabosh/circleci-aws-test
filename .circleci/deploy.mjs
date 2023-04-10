@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
-import AWS from 'aws-sdk';
 
 const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) => {
   try {
