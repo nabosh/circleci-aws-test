@@ -50,6 +50,7 @@ function update_cloudfront_behavior() {
   BEHAVIOR_PATH_PATTERN="*"
 
   echo "THE DISTRUBTION ID: $DISTRIBUTION_ID"
+  echo "THE ACCOUNT NUMBERRR: $AWS_ACCOUNT_ID"
 
   # Call the deploy.mjs script and pass the required arguments
   AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
