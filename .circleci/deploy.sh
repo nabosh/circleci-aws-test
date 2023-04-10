@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 # Deploy Angular App
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 
 function create_lambda_package() {
   # Create header-lambda directory
@@ -53,7 +54,7 @@ function update_cloudfront_behavior() {
   echo "THE ACCOUNT NUMBERRR: $AWS_ACCOUNT_ID"
 
   # Call the deploy.mjs script and pass the required arguments
-  AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+  node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json" "$AWS_ACCOUNT_ID"
 }
 
 function invalidate_cache_and_sync_s3() {
