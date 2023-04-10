@@ -52,4 +52,11 @@ function invalidate_cache_and_sync_s3() {
     --paths "/*"
 
   # Sync directory with S3 bucket
-  aws s3 sync dist
+  aws s3 sync dist/circlecitest s3://$S3_BUCKET_NAME --delete
+}
+
+# Main script
+create_lambda_package
+LAMBDA_VERSION=$(deploy_lambda)
+update_cloudfront_behavior "$LAMBDA_VERSION"
+invalidate_cache_and_sync_s3
