@@ -32,6 +32,8 @@ function deploy_lambda() {
 
   echo "AWS Lambda publish-version output: $LAMBDA_VERSION_OUTPUT"
 
+  echo "Lambda function ARN: arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
+
   echo -n $LAMBDA_VERSION
 }
 
