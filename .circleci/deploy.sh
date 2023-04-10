@@ -22,7 +22,7 @@ function deploy_lambda() {
     --zip-file fileb://header-lambda/index.zip
 
   # Wait for Lambda update to complete
-  sleep 10
+  sleep 20
 
   # Publish Lambda version
   LAMBDA_VERSION=$(aws lambda publish-version \
