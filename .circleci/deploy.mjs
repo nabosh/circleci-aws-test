@@ -1,4 +1,4 @@
-//.circleci/deploy.mjs
+// .circleci/deploy.mjs
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
@@ -54,14 +54,9 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
   }
 }
 
-async function deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile) {
-  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
-}
-
 async function main() {
   const [_, __, action, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
 
-  console.log(" >>>>>>>>>>>>>>>>>>  I AM IN THE MAIN FUNCTION ")
   if (action === 'updateCloudFrontBehavior') {
     await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
   } else {
@@ -69,3 +64,5 @@ async function main() {
     process.exit(1);
   }
 }
+
+main();
