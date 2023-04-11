@@ -43,12 +43,10 @@ function update_cloudfront_behavior() {
   DISTRIBUTION_ID=$CLOUDFRONT_DISTRIBUTION_ID
   DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
   aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
+  BEHAVIOR_PATH_PATTERN="*"
 
   # Call the deploy.mjs script and pass the required arguments
-  # node .circleci/deploy.mjs "$DEPLOY_FUNCTION" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
-  # node .circleci/deploy.mjs "deploy_header_lambda_mjs" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
-  node .circleci/deploy.mjs "deploy_header_lambda_mjs" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG"
-
+  node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
 }
 
 function invalidate_cache_and_sync_s3() {
