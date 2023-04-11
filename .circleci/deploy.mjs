@@ -2,6 +2,13 @@
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
+import { createWriteStream } from 'fs';
+const logStream = createWriteStream('deploy_mjs.log', { flags: 'a' });
+console.log = function(...args) {
+  logStream.write(args.join(' ') + '\n');
+  process.stdout.write(args.join(' ') + '\n');
+};
+
 async function getConfigJSON(configFile) {
   return JSON.parse(await fs.readFile(configFile, 'utf-8'));
 }
