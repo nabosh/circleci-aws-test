@@ -59,10 +59,10 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
 }
 
 async function mjs_main_deploy_lambda(functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
-  if (functionName === 'deployHeaderLambda') {
+  // if (functionName === 'deployHeaderLambda') {
     await deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
-  } else {
-    // Default behavior
-    await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
-  }
+  // } else {
+  //   // Default behavior
+  //   await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
+  // }
 }
