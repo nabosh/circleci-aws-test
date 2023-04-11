@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
-const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId) => {
+const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, AWS_ACCOUNT_ID, LAMBDA_FUNCTION_NAME) => {
   const configJSON = await fs.readFile(configFile, 'utf-8');
   const config = JSON.parse(configJSON);
   const behavior = config.DistributionConfig.DefaultCacheBehavior;
@@ -33,10 +33,10 @@ const updateDistribution = async (config, distributionId, distributionEtag) => {
 };
 
 const main = async () => {
-  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId] = process.argv;
+  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, AWS_ACCOUNT_ID, LAMBDA_FUNCTION_NAME] = process.argv;
   
   try {
-    const config = await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId);
+    const config = await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, AWS_ACCOUNT_ID, LAMBDA_FUNCTION_NAME);
     await updateDistribution(config, distributionId, distributionEtag);
   } catch (error) {
     console.error(`Error updating CloudFront behavior: ${error.message}`);
