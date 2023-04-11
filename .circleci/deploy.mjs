@@ -17,13 +17,13 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
 
   lambdaAssociation.LambdaFunctionARN = lambdaAssociation.LambdaFunctionARN.replace(
     /^arn:aws:lambda:us-east-1:(\d+):/,
-    `arn:aws:lambda:us-east-1:${process.env.AWS_ACCOUNT_ID}:`
+    `arn:aws:lambda:us-east-1:${accountId}:`
   );
 
   lambdaAssociation.LambdaFunctionARN = lambdaAssociation.LambdaFunctionARN.replace(
     /(:\d+|$)/,
     `:${lambdaVersion.trim()}`
-  );
+);
 
   return config;
 };
@@ -41,10 +41,10 @@ const updateDistribution = async (config, distributionId, distributionEtag) => {
 };
 
 const main = async () => {
-  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
+  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId] = process.argv;
   
   try {
-    const config = await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+    const config = await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId);
     await updateDistribution(config, distributionId, distributionEtag);
   } catch (error) {
     console.error(`Error updating CloudFront behavior: ${error.message}`);
