@@ -6,9 +6,8 @@ async function getConfigJSON(configFile) {
   return JSON.parse(await fs.readFile(configFile, 'utf-8'));
 }
 
-function findLambdaAssociation(config, behaviorPathPattern) {
-  const behaviors = config.DistributionConfig.CacheBehaviors.Items;
-  const behavior = behaviors.find((item) => item.PathPattern === behaviorPathPattern) || config.DistributionConfig.DefaultCacheBehavior;
+function findLambdaAssociation(config) {
+  const behavior = config.DistributionConfig.DefaultCacheBehavior;
   return behavior.LambdaFunctionAssociations.Items.find(
     (item) => item.EventType === 'origin-response'
   );
@@ -56,8 +55,8 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
 }
 
 async function deploy_header_lambda_mjs() {
-  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
-  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+  const [_, __, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
+  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
 
 // Run the appropriate function based on the function name passed as an argument
