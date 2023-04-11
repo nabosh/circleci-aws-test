@@ -54,6 +54,15 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
   }
 }
 
-const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
+async function deploy(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) {
+  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+}
 
-updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
+
+if (functionName === 'deploy') {
+  deploy(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+} else {
+  // Default behavior
+  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+}
