@@ -8,7 +8,7 @@ function create_lambda_directory() {
   mkdir header-lambda
 
   # Copy index.js file into the header-lambda directory
-  cp src/aws/index.js header-lambda/
+  cp lib/scripts/header_lambda.js header-lambda/index.js
 }
 
 function zip_lambda() {
