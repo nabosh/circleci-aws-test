@@ -58,9 +58,7 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
   await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
 
-async function mjs_main_deploy_lambda(lambdaVersion, distributionId, distributionEtag, configFile) {
-  const [_, __, functionName] = process.argv;
-
+async function mjs_main_deploy_lambda(functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
   if (functionName === 'deployHeaderLambda') {
     await deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
   } else {
