@@ -40,7 +40,7 @@ function deploy_lambda() {
   echo "Lambda function ARN: arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
   echo "Lambda function ARN: arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
 
-  echo -n $LAMBDA_VERSION
+  echo -n "arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
 }
 
 function update_cloudfront_behavior() {
