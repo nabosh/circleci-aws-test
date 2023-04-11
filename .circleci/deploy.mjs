@@ -15,7 +15,7 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
     process.exit(1);
   }
 
-  lambdaAssociation.LambdaFunctionARN = `arn:aws:lambda:us-east-1:${accountId}:function:${LAMBDA_FUNCTION_NAME}:${lambdaVersion.trim()}`;
+  lambdaAssociation.LambdaFunctionARN = `arn:aws:lambda:us-east-1:${AWS_ACCOUNT_ID}:function:${LAMBDA_FUNCTION_NAME}:${lambdaVersion.trim()}`;
 
   return config;
 };
