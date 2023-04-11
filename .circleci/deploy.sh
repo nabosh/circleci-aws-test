@@ -44,8 +44,11 @@ function update_cloudfront_behavior() {
   DISTRIBUTION_ETAG=$(aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --query ETag --output text)
   aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 
-  # Call the deploy.mjs script and pass the required arguments
-  node .circleci/deploy.mjs "deployHeaderLambda" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
+  # Call the deploy.mjs script and pass the required arguments, save output to a log file
+  node .circleci/deploy.mjs "deployHeaderLambda" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json" > deploy_mjs.log 2>&1
+
+  # Display the log file content
+  cat deploy_mjs.log
 }
 
 function invalidate_cache_and_sync_s3() {
