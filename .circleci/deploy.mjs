@@ -34,7 +34,7 @@ function executeCloudFrontUpdate(distributionId, distributionEtag) {
   );
 }
 
-async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile) {
+async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) {
   try {
     const config = await getConfigJSON(configFile);
     const lambdaAssociation = findLambdaAssociation(config);
@@ -54,18 +54,6 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
   }
 }
 
-async function deploy_header_lambda_mjs() {
-  const [_, __, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
-  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
-}
+const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
 
-// Run the appropriate function based on the function name passed as an argument
-const functionName = process.argv[2];
-
-if (functionName === 'deploy_header_lambda_mjs') {
-  deploy_header_lambda_mjs();
-} else {
-  // Default behavior
-  const [_, __, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
-  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
-}
+updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
