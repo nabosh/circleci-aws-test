@@ -45,7 +45,7 @@ function update_cloudfront_behavior() {
   aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 
   # Call the deploy.mjs script and pass the required arguments
-  node .circleci/deploy.mjs "main" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+  node .circleci/deploy.mjs "updateCloudFrontBehavior" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
 }
 
 function invalidate_cache_and_sync_s3() {
