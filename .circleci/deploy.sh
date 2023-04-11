@@ -42,6 +42,7 @@ function deploy_lambda() {
   echo "Lambda function ARN: $LAMBDA_ARN"
 
   echo $LAMBDA_ARN
+  return $LAMBDA_ARN
 }
 
 function update_cloudfront_behavior() {
