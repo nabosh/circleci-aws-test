@@ -54,7 +54,7 @@ function update_cloudfront_behavior() {
   echo "THE ACCOUNT NUMBERRR: $AWS_ACCOUNT_ID"
 
   # Call the deploy.mjs script and pass the required arguments
-  node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json" "$AWS_ACCOUNT_ID"
+  node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json" "$AWS_ACCOUNT_ID" "$LAMBDA_FUNCTION_NAME"
 }
 
 function invalidate_cache_and_sync_s3() {
