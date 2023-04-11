@@ -58,12 +58,14 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
   await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
 
-async function mjs_main_deploy_lambda(functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
+async function mjs_main_deploy_lambda(_, __, functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
+  const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
+
   if (functionName === 'deployHeaderLambda') {
-    console.log('<< IF >>')
+    console.log('>>> >> > IF < << <<<')
     await deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
   } else {
-    console.log('<< ELSE >>')
+    console.log('< << <<< ELSE >>> >> >')
     // Default behavior
     await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
   }
