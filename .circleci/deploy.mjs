@@ -34,7 +34,7 @@ function executeCloudFrontUpdate(distributionId, distributionEtag) {
   );
 }
 
-async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) {
+async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile) {
   try {
     const config = await getConfigJSON(configFile);
     const lambdaAssociation = findLambdaAssociation(config);
@@ -66,6 +66,6 @@ if (functionName === 'deploy_header_lambda_mjs') {
   deploy_header_lambda_mjs();
 } else {
   // Default behavior
-  const [_, __, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
-  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+  const [_, __, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
+  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
