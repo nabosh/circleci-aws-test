@@ -46,7 +46,8 @@ function update_cloudfront_behavior() {
   BEHAVIOR_PATH_PATTERN="*"
 
   # Call the deploy.mjs script and pass the required arguments
-  node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+  node .circleci/deploy.mjs "$DEPLOY_FUNCTION" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
+  # node .circleci/deploy.mjs "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$BEHAVIOR_PATH_PATTERN" "$(pwd)/distribution-config-original.json"
 }
 
 function invalidate_cache_and_sync_s3() {

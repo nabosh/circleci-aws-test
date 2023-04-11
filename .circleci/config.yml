@@ -38,6 +38,7 @@ jobs:
             LAMBDA_FUNCTION_NAME: header-lambda
             CLOUDFRONT_DISTRIBUTION_ID: E380M7BHVXFP6X
             S3_BUCKET_NAME: circleciangularbucket
+            DEPLOY_FUNCTION: deploy_header_lambda_mjs
 
 workflows:
   version: 2
