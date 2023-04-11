@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
-const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) => {
+const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile, accountId) => {
   const configJSON = await fs.readFile(configFile, 'utf-8');
   const config = JSON.parse(configJSON);
   const behavior = config.DistributionConfig.DefaultCacheBehavior;
