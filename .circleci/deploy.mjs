@@ -54,13 +54,13 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
   }
 }
 
-async function deploy(lambdaVersion, distributionId, distributionEtag, configFile) {
+async function deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile) {
   await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
 
 const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
 
-if (functionName === 'deploy') {
+if (functionName === 'deployHeaderLambda') {
   deploy(lambdaVersion, distributionId, distributionEtag, configFile);
 } else {
   // Default behavior
