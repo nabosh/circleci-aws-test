@@ -1,3 +1,4 @@
+#.circleci/deploy.sh
 #!/bin/bash
 set -e
 # Deploy Angular App
@@ -44,7 +45,7 @@ function update_cloudfront_behavior() {
   aws cloudfront get-distribution-config --id $DISTRIBUTION_ID --output json > distribution-config-original.json
 
   # Call the deploy.mjs script and pass the required arguments
-  node .circleci/deploy.mjs "updateCloudFrontBehavior" "$LAMBDA_FUNCTION_NAME" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
+  node -e 'import { main } from "./.circleci/deploy.mjs"; main();' "updateCloudFrontBehavior" "$LAMBDA_VERSION" "$DISTRIBUTION_ID" "$DISTRIBUTION_ETAG" "$(pwd)/distribution-config-original.json"
 }
 
 function invalidate_cache_and_sync_s3() {
@@ -66,5 +67,3 @@ function deploy_header_lambda(){
   update_cloudfront_behavior "$LAMBDA_VERSION"
   invalidate_cache_and_sync_s3
 }
-
-deploy_header_lambda
