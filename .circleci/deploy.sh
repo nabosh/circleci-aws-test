@@ -61,12 +61,11 @@ function invalidate_cache_and_sync_s3() {
 
 function deploy_header_lambda(){
   echo "DEPLOYING HEADER LAMBDA FUNCTIONNNNN"
+  # Main script
+  create_lambda_directory
+  zip_lambda
+  deploy_lambda
+  LAMBDA_VERSION=$(publish_lambda_version)
+  update_cloudfront_behavior "$LAMBDA_VERSION"
+  invalidate_cache_and_sync_s3
 }
-
-# Main script
-create_lambda_directory
-zip_lambda
-deploy_lambda
-LAMBDA_VERSION=$(publish_lambda_version)
-update_cloudfront_behavior "$LAMBDA_VERSION"
-invalidate_cache_and_sync_s3
