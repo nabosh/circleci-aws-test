@@ -61,7 +61,7 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
 const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
 
 if (functionName === 'deployHeaderLambda') {
-  deploy(lambdaVersion, distributionId, distributionEtag, configFile);
+  deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
 } else {
   // Default behavior
   updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
