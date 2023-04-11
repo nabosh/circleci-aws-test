@@ -6,8 +6,9 @@ async function getConfigJSON(configFile) {
   return JSON.parse(await fs.readFile(configFile, 'utf-8'));
 }
 
-function findLambdaAssociation(config) {
-  const behavior = config.DistributionConfig.DefaultCacheBehavior;
+function findLambdaAssociation(config, behaviorPathPattern) {
+  const behaviors = config.DistributionConfig.CacheBehaviors.Items;
+  const behavior = behaviors.find((item) => item.PathPattern === behaviorPathPattern) || config.DistributionConfig.DefaultCacheBehavior;
   return behavior.LambdaFunctionAssociations.Items.find(
     (item) => item.EventType === 'origin-response'
   );
