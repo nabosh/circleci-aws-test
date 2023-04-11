@@ -10,7 +10,13 @@ console.log = function(...args) {
 };
 
 async function getConfigJSON(configFile) {
+  console.log('Before updating configFile:');
+  console.log(JSON.stringify(configFile, null, 2));
+
   return JSON.parse(await fs.readFile(configFile, 'utf-8'));
+
+  console.log('After updating configFile:');
+  console.log(JSON.stringify(configFile, null, 2));
 }
 
 function findLambdaAssociation(config) {
