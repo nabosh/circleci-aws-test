@@ -34,7 +34,7 @@ function executeCloudFrontUpdate(distributionId, distributionEtag) {
   );
 }
 
-async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) {
+async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile) {
   try {
     const config = await getConfigJSON(configFile);
     const lambdaAssociation = findLambdaAssociation(config);
@@ -54,15 +54,15 @@ async function updateCloudFrontBehavior(lambdaVersion, distributionId, distribut
   }
 }
 
-async function deploy(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile) {
-  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+async function deploy(lambdaVersion, distributionId, distributionEtag, configFile) {
+  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
 
-const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile] = process.argv;
+const [_, __, functionName, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
 
 if (functionName === 'deploy') {
-  deploy(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+  deploy(lambdaVersion, distributionId, distributionEtag, configFile);
 } else {
   // Default behavior
-  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, behaviorPathPattern, configFile);
+  updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
 }
