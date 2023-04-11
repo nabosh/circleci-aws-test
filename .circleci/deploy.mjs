@@ -61,6 +61,7 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
 async function main() {
   const [_, __, action, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
 
+  console.log(" >>>>>>>>>>>>>>>>>>  I AM IN THE MAIN FUNCTION ")
   if (action === 'updateCloudFrontBehavior') {
     await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
   } else {
