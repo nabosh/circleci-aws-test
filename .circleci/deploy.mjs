@@ -60,8 +60,10 @@ async function deployHeaderLambda(lambdaVersion, distributionId, distributionEta
 
 async function mjs_main_deploy_lambda(functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
   if (functionName === 'deployHeaderLambda') {
+    console.log('<< IF >>')
     await deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
   } else {
+    console.log('<< ELSE >>')
     // Default behavior
     await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
   }
