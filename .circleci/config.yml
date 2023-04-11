@@ -32,7 +32,7 @@ jobs:
           name: Run deploy script
           command: |
             chmod +x .circleci/deploy.sh
-            ./.circleci/deploy.sh
+            source .circleci/deploy.sh
             deploy_header_lambda
           environment:
             LAMBDA_FUNCTION_NAME: header-lambda
