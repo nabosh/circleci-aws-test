@@ -37,10 +37,10 @@ function deploy_lambda() {
 
   echo "THE ACCOUNT NUMBERRR: $AWS_ACCOUNT_ID"
   echo "THE DISTRUBTION ID: $DISTRIBUTION_ID"
-  echo "Lambda function ARN: arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
-  echo "Lambda function ARN: arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
+  
+  LAMBDA_ARN="arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
+  echo "Lambda function ARN: $LAMBDA_ARN"
 
-  echo -n "arn:aws:lambda:us-east-1:$AWS_ACCOUNT_ID:function:$LAMBDA_FUNCTION_NAME:$LAMBDA_VERSION"
 }
 
 function update_cloudfront_behavior() {
@@ -72,5 +72,5 @@ function invalidate_cache_and_sync_s3() {
 # Main script
 create_lambda_package
 LAMBDA_VERSION=$(deploy_lambda)
-update_cloudfront_behavior "$LAMBDA_VERSION"
+update_cloudfront_behavior "$LAMBDA_ARN"
 invalidate_cache_and_sync_s3
