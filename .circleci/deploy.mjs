@@ -1,22 +1,8 @@
-//.circleci/deploy.mjs
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
-import { createWriteStream } from 'fs';
-const logStream = createWriteStream('deploy_mjs.log', { flags: 'a' });
-console.log = function(...args) {
-  logStream.write(args.join(' ') + '\n');
-  process.stdout.write(args.join(' ') + '\n');
-};
-
 async function getConfigJSON(configFile) {
-  console.log('Before updating configFile:');
-  console.log(JSON.stringify(configFile, null, 2));
-
   return JSON.parse(await fs.readFile(configFile, 'utf-8'));
-
-  console.log('After updating configFile:');
-  console.log(JSON.stringify(configFile, null, 2));
 }
 
 function findLambdaAssociation(config) {
@@ -44,40 +30,38 @@ function executeCloudFrontUpdate(distributionId, distributionEtag) {
   execSync(
     `aws cloudfront update-distribution --id ${distributionId} --if-match ${distributionEtag} --distribution-config file://distribution-config-updated.json`,
     { stdio: 'inherit' }
-  );
-}
-
-async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile) {
-  try {
-    const config = await getConfigJSON(configFile);
-    const lambdaAssociation = findLambdaAssociation(config);
-
-    if (!lambdaAssociation) {
-      console.error('No LambdaFunctionAssociation found with EventType "origin-response".');
+    );
+  }
+  
+  async function updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile) {
+    try {
+      const config = await getConfigJSON(configFile);
+      const lambdaAssociation = findLambdaAssociation(config);
+  
+      if (!lambdaAssociation) {
+        console.error('No LambdaFunctionAssociation found with EventType "origin-response".');
+        process.exit(1);
+      }
+  
+      updateLambdaVersion(lambdaAssociation, lambdaVersion);
+      await writeUpdatedConfig(config);
+      executeCloudFrontUpdate(distributionId, distributionEtag);
+  
+    } catch (error) {
+      console.error(`Error updating CloudFront behavior: ${error.message}`);
       process.exit(1);
     }
-
-    updateLambdaVersion(lambdaAssociation, lambdaVersion);
-    await writeUpdatedConfig(config);
-    executeCloudFrontUpdate(distributionId, distributionEtag);
-
-  } catch (error) {
-    console.error(`Error updating CloudFront behavior: ${error.message}`);
-    process.exit(1);
   }
-}
-
-async function deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile) {
-  await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
-}
-
-async function mjs_main_deploy_lambda(functionName, lambdaVersion, distributionId, distributionEtag, configFile) {
-  if (functionName === 'deployHeaderLambda') {
-    console.log('>>> >> > IF < << <<<')
-    await deployHeaderLambda(lambdaVersion, distributionId, distributionEtag, configFile);
-  } else {
-    // Default behavior
-    console.log('< << <<< ELSE >>> >> >')
-    await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
+  
+  async function main() {
+    const [_, __, action, functionName, lambdaVersion, distributionId, distributionEtag, configFile] = process.argv;
+  
+    if (action === 'updateCloudFrontBehavior') {
+      await updateCloudFrontBehavior(lambdaVersion, distributionId, distributionEtag, configFile);
+    } else {
+      console.error('Invalid action specified.');
+      process.exit(1);
+    }
   }
-}
+  
+  main();
