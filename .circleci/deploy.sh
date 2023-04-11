@@ -26,12 +26,14 @@ function deploy_lambda() {
   sleep 20
 
   # Publish Lambda version
-  LAMBDA_VERSION=$(aws lambda publish-version \
+  LAMBDA_VERSION_OUTPUT=$(aws lambda publish-version \
     --function-name $LAMBDA_FUNCTION_NAME \
     --query Version \
     --output text)
+  LAMBDA_VERSION=$(echo -n $LAMBDA_VERSION_OUTPUT | tr -d '\n')
 
   echo "AWS Lambda publish-version output: $LAMBDA_VERSION_OUTPUT"
+  echo "AWS Lambda Version: $LAMBDA_VERSION"
 
   echo "THE ACCOUNT NUMBERRR: $AWS_ACCOUNT_ID"
   echo "THE DISTRUBTION ID: $DISTRIBUTION_ID"
