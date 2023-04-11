@@ -15,7 +15,9 @@ const updateCloudFrontBehavior = async (lambdaVersion, distributionId, distribut
     process.exit(1);
   }
 
+  console.log(`Lambda version: ${lambdaVersion}`);
   lambdaAssociation.LambdaFunctionARN = `arn:aws:lambda:us-east-1:${AWS_ACCOUNT_ID}:function:${LAMBDA_FUNCTION_NAME}:${lambdaVersion.trim()}`;
+  console.log(lambdaAssociation.LambdaFunctionARN)
 
   return config;
 };
@@ -45,3 +47,4 @@ const main = async () => {
 };
 
 main();
+// An error occurred (InvalidLambdaFunctionAssociation) when calling the UpdateDistribution operation: The function ARN must reference a specific function version. (The ARN must end with the version number.) ARN: arn:aws:lambda:us-east-1:671249171349:function:header-lambda:{
