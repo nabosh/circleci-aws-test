@@ -59,6 +59,10 @@ function invalidate_cache_and_sync_s3() {
   aws s3 sync dist/circlecitest s3://circleciangularbucket --delete
 }
 
+function deploy_header_lambda(){
+  echo "DEPLOYING HEADER LAMBDA FUNCTIONNNNN"
+}
+
 # Main script
 create_lambda_directory
 zip_lambda

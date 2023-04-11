@@ -33,6 +33,7 @@ jobs:
           command: |
             chmod +x .circleci/deploy.sh
             ./.circleci/deploy.sh
+            deploy_header_lambda
           environment:
             LAMBDA_FUNCTION_NAME: header-lambda
             CLOUDFRONT_DISTRIBUTION_ID: E380M7BHVXFP6X
