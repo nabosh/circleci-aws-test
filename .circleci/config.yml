@@ -40,6 +40,7 @@ jobs:
             CLOUDFRONT_DISTRIBUTION_ID: E380M7BHVXFP6X
             S3_BUCKET_NAME: circleciangularbucket
             DEPLOY_FUNCTION: deploy_header_lambda_mjs
+            AWS_REGION: us-east-1
 
 workflows:
   version: 2
