@@ -1,7 +1,12 @@
 #.circleci/deploy.sh
 #!/bin/bash
 set -e
+# Output OS environment
+echo "Operating System Environment:"
+uname -a
+echo ""
 # Deploy Angular App
+# ...
 
 function create_lambda_directory() {
   # Create header-lambda directory
