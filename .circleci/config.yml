@@ -19,10 +19,6 @@ jobs:
             sudo apt-get install -y python3-pip
             sudo pip3 install awscli
       - run:
-          name: Configure AWS CLI
-          command: |
-            aws configure set default.region us-east-1
-      - run:
           name: List files in directory
           command: ls dist/
       - run:
