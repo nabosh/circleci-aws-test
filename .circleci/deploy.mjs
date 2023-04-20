@@ -1,5 +1,5 @@
 // .circleci/deploy.mjs
-// testing something
+// something
 import { promises as fs } from 'fs';
 import { execSync } from 'child_process';
 
