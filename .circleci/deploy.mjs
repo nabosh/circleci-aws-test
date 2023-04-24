@@ -10,7 +10,8 @@ async function getConfigJSON(configFile) {
 function findLambdaAssociation(config) {
   const behavior = config.DistributionConfig.DefaultCacheBehavior;
   return behavior.LambdaFunctionAssociations.Items.find(
-    (item) => item.EventType === 'origin-response'
+    // (item) => item.EventType === 'origin-response'
+    (item) => item.EventType === 'viewer-request'
   );
 }
 
